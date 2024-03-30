@@ -1,0 +1,127 @@
+import math
+
+# Global variables for history and memory
+history = []
+memory = 0
+
+def get_float_input(prompt):
+    """Function to get valid float input from the user."""
+    while True:
+        try:
+            value = float(input(prompt))
+            return value
+        except ValueError:
+            print("Error: Invalid input. Please enter a valid number.")
+
+def calculate(first_value, second_value, operation):
+    """Function to perform the specified operation on the two values."""
+    if operation == '+':
+        return first_value + second_value
+    elif operation == '-':
+        return first_value - second_value
+    elif operation == '*':
+        return first_value * second_value
+    elif operation == '/':
+        if second_value == 0:
+            raise ValueError("Error: Cannot divide by zero!")
+        return first_value / second_value
+    elif operation == '**':
+        return first_value ** second_value
+    elif operation == '%':
+        return first_value % second_value
+    else:
+        raise ValueError("Error: Invalid operation entered!")
+
+def calculate_unary(operation, value):
+    """Function to perform unary operations."""
+    if operation == 'sqrt':
+        return math.sqrt(value)
+    elif operation == '-':
+        return -value
+    else:
+        raise ValueError("Error: Invalid unary operation entered!")
+
+def add_to_history(expression, result):
+    """Function to add expression and result to history."""
+    history.append((expression, result))
+
+def display_history():
+    """Function to display the history of calculations."""
+    print("History of calculations:")
+    for i, (expression, result) in enumerate(history, start=1):
+        print(f"{i}. {expression} = {result}")
+
+def memory_store(value):
+    """Function to store value in memory."""
+    global memory
+    memory += value
+
+def memory_recall():
+    """Function to recall value from memory."""
+    return memory
+
+def memory_clear():
+    """Function to clear memory."""
+    global memory
+    memory = 0
+
+# Main program
+print("Welcome to the Advanced Calculator!")
+
+while True:
+    print("\nMenu:")
+    print("1. Perform calculation")
+    print("2. Display history")
+    print("3. Memory functions (M+, M-, MR, MC)")
+    print("4. Exit")
+
+    choice = input("Enter your choice: ")
+
+    if choice == '1':
+        operation = input("Enter the operation (+, -, *, /, **, %, sqrt, -): ")
+
+        if operation in ('+', '-', '*', '/', '**', '%'):
+            first_value = get_float_input("Enter the first value: ")
+            second_value = get_float_input("Enter the second value: ")
+            try:
+                result = calculate(first_value, second_value, operation)
+                print("Result:", result)
+                add_to_history(f"{first_value} {operation} {second_value}", result)
+            except ValueError as e:
+                print(e)
+        elif operation in ('sqrt', '-'):
+            value = get_float_input("Enter the value: ")
+            try:
+                result = calculate_unary(operation, value)
+                print("Result:", result)
+                add_to_history(f"{operation}({value})", result)
+            except ValueError as e:
+                print(e)
+        else:
+            print("Error: Invalid operation entered!")
+
+    elif choice == '2':
+        display_history()
+
+    elif choice == '3':
+        memory_option = input("Enter memory function (M+, M-, MR, MC): ")
+        if memory_option == 'M+':
+            value = get_float_input("Enter value to add to memory: ")
+            memory_store(value)
+        elif memory_option == 'M-':
+            value = get_float_input("Enter value to subtract from memory: ")
+            memory_store(-value)
+        elif memory_option == 'MR':
+            print("Memory value:", memory_recall())
+        elif memory_option == 'MC':
+            memory_clear()
+            print("Memory cleared.")
+        else:
+            print("Error: Invalid memory function entered!")
+
+    elif choice == '4':
+        print("Exiting the calculator.")
+        break
+
+    else:
+        print("Error: Invalid choice. Please enter a number from the menu.")
